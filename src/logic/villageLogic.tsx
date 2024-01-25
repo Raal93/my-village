@@ -1,26 +1,30 @@
 import { useEffect, useState } from 'react';
+
+import { productionByLevel } from './vilageData';
+
 const HOUR_TO_SEC = 60 * 60;
+const WORLD_SPEED = 1.6;
 interface ResourceStock {
   wood: number;
   clay: number;
   iron: number;
 }
 interface ResourceProduction {
-  wood: number;
-  clay: number;
-  iron: number;
+  wood: { level: number; production: number };
+  clay: { level: number; production: number };
+  iron: { level: number; production: number };
 }
 
-export const useResourceUpdater = (
+export const stockUpdater = (
   setStock: React.Dispatch<React.SetStateAction<ResourceStock>>,
-  production: ResourceProduction,
+  resourceBuilding: ResourceProduction,
 ) => {
   useEffect(() => {
     const updateStock = () => {
       setStock((prevStock) => ({
-        wood: prevStock.wood + production.wood / HOUR_TO_SEC,
-        clay: prevStock.clay + production.clay / HOUR_TO_SEC,
-        iron: prevStock.iron + production.iron / HOUR_TO_SEC,
+        wood: prevStock.wood + resourceBuilding.wood.production / HOUR_TO_SEC,
+        clay: prevStock.clay + resourceBuilding.clay.production / HOUR_TO_SEC,
+        iron: prevStock.iron + resourceBuilding.iron.production / HOUR_TO_SEC,
       }));
     };
 
@@ -29,26 +33,40 @@ export const useResourceUpdater = (
     return () => {
       clearInterval(intervalId); // Wyczyszczenie interwału przy odmontowywaniu komponentu
     };
-  }, [setStock, production]); // Zależności useEffect
+  }, [setStock, resourceBuilding]); // Zależności useEffect
 };
 
 export const manageResources = () => {
   const [stock, setStock] = useState<ResourceStock>({
     wood: 15,
-    clay: 0,
+    clay: 25,
     iron: 20,
   });
 
-  const [production, setProduction] = useState<ResourceProduction>({
-    wood: 6000,
-    clay: 7500,
-    iron: 40000,
+  const [resourceBuilding, setResourceBuilding] = useState<ResourceProduction>({
+    wood: { level: 0, production: 5 },
+    clay: { level: 0, production: 5 },
+    iron: { level: 0, production: 5 },
   });
+
+  const upgradeBuilding = (resourceType: keyof ResourceProduction) => {
+    setResourceBuilding((prevBuilding) => {
+      if (prevBuilding[resourceType].level === 30) return prevBuilding;
+      return {
+        ...prevBuilding,
+        [resourceType]: {
+          level: prevBuilding[resourceType].level + 1,
+          production: productionByLevel[prevBuilding[resourceType].level] * WORLD_SPEED,
+        },
+      };
+    });
+  };
 
   return {
     stock,
     setStock,
-    production,
-    setProduction,
+    resourceBuilding,
+    setResourceBuilding,
+    upgradeBuilding,
   };
 };

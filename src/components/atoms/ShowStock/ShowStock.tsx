@@ -3,7 +3,7 @@ interface ShowStockProps {
 }
 
 const ShowStock = ({ stock }: ShowStockProps) => {
-  return <p>{stock.toFixed(0)}</p>;
+  return <span>{stock.toFixed(0)} || </span>;
 };
 
 export default ShowStock;
