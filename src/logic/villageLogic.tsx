@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { productionByLevel } from './vilageData';
+import { productionData } from './vilageData';
 
 const HOUR_TO_SEC = 60 * 60;
 const WORLD_SPEED = 1.6;
@@ -50,13 +50,15 @@ export const manageResources = () => {
   });
 
   const upgradeBuilding = (resourceType: keyof ResourceProduction) => {
+    const { getProductionOnLvl } = productionData();
     setResourceBuilding((prevBuilding) => {
       if (prevBuilding[resourceType].level === 30) return prevBuilding;
       return {
         ...prevBuilding,
         [resourceType]: {
           level: prevBuilding[resourceType].level + 1,
-          production: productionByLevel[prevBuilding[resourceType].level] * WORLD_SPEED,
+          production:
+            getProductionOnLvl(prevBuilding[resourceType].level + 1) * WORLD_SPEED,
         },
       };
     });
