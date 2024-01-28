@@ -5,16 +5,16 @@ const NavigationComponent = () => {
     <div>
       <ul>
         <li>
-          <NavLink to="/">Wioska</NavLink>
+          <NavLink to="/my-village/">Wioska</NavLink>
         </li>
         <li>
-          <NavLink to="/ratusz">Ratusz</NavLink>
+          <NavLink to="/my-village/ratusz">Ratusz</NavLink>
         </li>
         <li>
-          <NavLink to="/settings">Ustawienia</NavLink>
+          <NavLink to="/my-village/settings">Ustawienia</NavLink>
         </li>
         <li>
-          <NavLink to="/simulator">Symulator</NavLink>
+          <NavLink to="/my-village/simulator">Symulator</NavLink>
         </li>
       </ul>
     </div>

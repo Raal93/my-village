@@ -12,10 +12,10 @@ const App = () => {
     <Router>
       <PageWrapper>
         <Routes>
-          <Route index path="/" element={<VillagePage />} />
-          <Route index path="/ratusz" element={<RatuszPage />} />
-          <Route index path="/settings" element={<SettingsPage />} />
-          <Route index path="/simulator" element={<SimulatorPage />} />
+          <Route index path="/my-village/" element={<VillagePage />} />
+          <Route index path="/my-village/ratusz" element={<RatuszPage />} />
+          <Route index path="/my-village/settings" element={<SettingsPage />} />
+          <Route index path="/my-village/simulator" element={<SimulatorPage />} />
           <Route index path="/*" element={<ErrorPage />} />
         </Routes>
       </PageWrapper>

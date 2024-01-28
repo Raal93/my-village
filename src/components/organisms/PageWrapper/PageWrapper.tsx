@@ -16,12 +16,12 @@ const PageWrapper = ({ children }: PropsChildren) => {
   return (
     <>
       <NavigationComponent />
-      <div>
+      {/* <div>
         Drewno: <ShowStock stock={stock.wood} />
         Glina: <ShowStock stock={stock.clay} />
         Żelazo: <ShowStock stock={stock.iron} />
-      </div>
-      <div>
+      </div> */}
+      {/* <div>
         <div>
           <button onClick={() => upgradeBuilding('wood')}>Podnieś poziom Tartaku</button>
           <span>Aktualny lvl: {resourceBuilding.wood.level}</span>
@@ -39,9 +39,9 @@ const PageWrapper = ({ children }: PropsChildren) => {
           <span>Aktualny lvl: {resourceBuilding.iron.level}</span>
           <span> || Produkcja: {resourceBuilding.iron.production.toFixed(0)}</span>
         </div>
-      </div>
+      </div> */}
       <div>{children}</div>
-      <footer>Stopka</footer>
+      {/* <footer>Stopka</footer> */}
     </>
   );
 };
