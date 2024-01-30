@@ -1,16 +1,21 @@
+import { useState } from 'react';
+import React from 'react';
+
+import QueueComponent from '../../components/molecules/QueueComponent/QueueComponent';
 import { simulate } from '../../logic/simulatorLogic';
+import { getTime } from '../../logic/simulatorLogic';
+import { SimulatorWrapper } from './SimulatorPage.styles';
 
 const SimulatorPage = () => {
   interface QueueItem {
     building: 'tartak' | 'cegielnia' | 'hutaZelaza';
     level: number;
   }
-
   interface Queue {
     [key: string]: QueueItem;
   }
 
-  const queue: Queue = {
+  const queueBasic: Queue = {
     '1': { building: 'tartak', level: 1 },
     '2': { building: 'cegielnia', level: 1 },
     '3': { building: 'hutaZelaza', level: 1 },
@@ -103,12 +108,41 @@ const SimulatorPage = () => {
     '90': { building: 'hutaZelaza', level: 30 },
   };
 
-  const result = simulate(queue);
+  const [totalTime, setTotalTime] = useState('');
+  const [buildTime, setBuildTime] = useState('');
+  const [waitedTime, setWaitedTime] = useState('');
+  const [queue, setQueue] = useState(queueBasic);
+
+  const convertSecToTime = (seconds: number): string => {
+    let timeLeft = 0;
+    const days = Math.floor(seconds / (24 * 60 * 60));
+    timeLeft = seconds % (24 * 60 * 60);
+    const hours = Math.floor(timeLeft / (60 * 60));
+    timeLeft = timeLeft % (60 * 60);
+    const minutes = Math.floor(timeLeft / 60);
+    timeLeft = timeLeft % 60;
+    return (
+      days + ' dni, ' + hours + ' godzin, ' + minutes + ' minut, ' + timeLeft + ' sekund'
+    );
+  };
+
+  const doSimulation = () => {
+    const result = simulate(queue);
+    const time = getTime(result);
+    setTotalTime(convertSecToTime(time.buildTime + time.waited));
+    setBuildTime(convertSecToTime(time.buildTime));
+    setWaitedTime(convertSecToTime(time.waited));
+    console.log(result);
+  };
+
   return (
-    <>
-      <div>{console.log(result)}</div>
-      <div>Strona Symulatora</div>
-    </>
+    <SimulatorWrapper>
+      <button onClick={() => doSimulation()}>Wykonaj symulację</button>
+      <div>Rozbudowa wioski zajęła: {totalTime}</div>
+      <div>W tym budowało: {buildTime}</div>
+      <div>czekało na surowce: {waitedTime}</div>
+      <QueueComponent queue={queue} />
+    </SimulatorWrapper>
   );
 };
 
