@@ -4,7 +4,7 @@ import QueueItemComponent from '../../atoms/QueueItemComponent/QueueItemComponen
 import { QueueTable, QueueWrapper } from './QueueComponent.styles';
 
 interface QueueProps {
-  queue: { [key: string]: QueueItem };
+  queue: QueueItem[];
 }
 
 interface QueueItem {
@@ -17,7 +17,7 @@ const QueueComponent = ({ queue }: QueueProps) => {
     <QueueWrapper>
       <QueueTable>
         <tbody>
-          {Object.values(queue).map((queueItem: QueueItem, i: number) => (
+          {queue.map((queueItem: QueueItem, i: number) => (
             <QueueItemComponent {...queueItem} key={i} />
           ))}
         </tbody>

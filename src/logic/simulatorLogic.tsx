@@ -155,12 +155,12 @@ interface IterationData {
   generatedDuringBuilding: BuildingResources;
 }
 
-export const simulate = (queue: Queue) => {
+export const simulate = (queue: QueueBuilding[]) => {
   const { getBuildingCosts } = buildingsData();
   const { getBuildTime } = buildingsTimeData();
   const simulationLogs: IterationData[] = [];
 
-  for (const key in queue) {
+  for (const item of queue) {
     const iterationData: IterationData = {
       building: '',
       level: 0,
@@ -176,8 +176,8 @@ export const simulate = (queue: Queue) => {
       stockAfterStartBuilding: { wood: 0, clay: 0, iron: 0 },
       generatedDuringBuilding: { wood: 0, clay: 0, iron: 0 },
     };
-    const buildingLevel = queue[key].level; // ustal lvl budynku
-    const buildingType = queue[key].building; // ustal typ budynku
+    const buildingLevel = item.level; // ustal lvl budynku
+    const buildingType = item.building; // ustal typ budynku
     const buildingCost = getBuildingCosts(buildingType, buildingLevel); // ustal koszty bieżącego budynku
     const production = getProductionStock(); // ustal aktualną produkcję wioski
     const currentStock = getResourcesStock(); // ustal aktualny stan spichlerza
