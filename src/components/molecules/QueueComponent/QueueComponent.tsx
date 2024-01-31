@@ -8,7 +8,7 @@ interface QueueProps {
 }
 
 interface QueueItem {
-  building: 'tartak' | 'cegielnia' | 'hutaZelaza';
+  building: string;
   level: number;
 }
 

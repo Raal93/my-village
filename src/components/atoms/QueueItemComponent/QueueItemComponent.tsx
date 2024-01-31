@@ -3,7 +3,7 @@ import React from 'react';
 import { Icon, QueueDataCell, QueueDataRow } from './QueueItemComponent.styles';
 
 interface QueueItem {
-  building: 'tartak' | 'cegielnia' | 'hutaZelaza';
+  building: string;
   level: number;
 }
 
@@ -25,7 +25,7 @@ const QueueItemComponent = ({ building, level }: QueueItem) => {
   return (
     <QueueDataRow>
       <QueueDataCell>
-        <Icon src={getIcon(building, level)} alt={'${ building } ${ level }'} />
+        <Icon src={getIcon(building, level)} alt={`${building}.png`} />
         {convertBuildingName(building)} Poziom {level}
       </QueueDataCell>
     </QueueDataRow>

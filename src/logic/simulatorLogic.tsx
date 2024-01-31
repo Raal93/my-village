@@ -1,6 +1,6 @@
 import { buildingsData, buildingsTimeData } from './simulatorData';
 interface QueueBuilding {
-  building: 'tartak' | 'cegielnia' | 'hutaZelaza';
+  building: string;
   level: number;
 }
 
@@ -10,14 +10,13 @@ interface BuildingResources {
   iron: number;
 }
 
-interface Queue {
-  [key: string]: QueueBuilding;
-}
-
 interface VillageState {
+  ratusz: number;
   tartak: number;
   cegielnia: number;
   hutaZelaza: number;
+  zagroda: number;
+  spichlerz: number;
 }
 
 interface Time {
@@ -30,21 +29,37 @@ const HOUR_TO_SECOND = 1 * 60 * 60;
 const SECOND_TO_HOUR = 1 / (60 * 60);
 let resourcesStock = { wood: 200, clay: 200, iron: 200 };
 let productionStock = { wood: 5, clay: 5, iron: 5 };
-let villageState = { tartak: 0, cegielnia: 0, hutaZelaza: 0 };
+let villageState = {
+  ratusz: 1,
+  tartak: 0,
+  cegielnia: 0,
+  hutaZelaza: 0,
+  zagroda: 1,
+  spichlerz: 1,
+};
+let workersCap = 240;
+let employedWorkers = 5;
+let stockCap = 1000;
+let ratuszTimeFactor = 95;
 
 const getResourcesStock = (): BuildingResources => resourcesStock;
-
 const setResourcesStock = (newStock: BuildingResources) => (resourcesStock = newStock);
-
 const getProductionStock = (): BuildingResources => productionStock;
-
 const setProductionStock = (newProduction: BuildingResources) =>
   (productionStock = newProduction);
-
 const getVillageState = (): VillageState => villageState;
-
 const setVillageState = (newVillageState: VillageState) =>
   (villageState = newVillageState);
+const getWorkersCap = (): number => workersCap;
+const setWorkersCap = (newWorkersCap: number) => (workersCap = newWorkersCap);
+const getStockCap = (): number => stockCap;
+const setStockCap = (newStockCap: number) => (stockCap = newStockCap);
+const getEmpolyedWorkers = (): number => employedWorkers;
+const setEmployedWorkers = (newEmpoyedWorkers: number) =>
+  (employedWorkers = newEmpoyedWorkers);
+const getRatuszTimeFactor = (): number => ratuszTimeFactor;
+const setRatuszTimeFactor = (newRatuszTimeFactor: number) =>
+  (ratuszTimeFactor = newRatuszTimeFactor);
 
 const updateProductionStock = (
   buildingType: string,
@@ -62,13 +77,30 @@ const updateResourcesStock = (
   value: BuildingResources,
   operation: string,
 ): BuildingResources => {
+  const stockCap = getStockCap();
+  const stock = getResourcesStock();
   let newStock: BuildingResources;
+  const over = { wood: 0, clay: 0, iron: 0 };
+
   if (operation === 'plus') {
-    newStock = {
-      wood: resourcesStock.wood + value.wood,
-      clay: resourcesStock.clay + value.clay,
-      iron: resourcesStock.iron + value.iron,
-    };
+    let wood, clay, iron;
+
+    if (stock.wood + value.wood > stockCap) {
+      wood = stockCap;
+      over.wood = stock.wood + value.wood - stockCap;
+    } else wood = stock.wood + value.wood;
+
+    if (stock.clay + value.clay > stockCap) {
+      clay = stockCap;
+      over.clay = stock.clay + value.clay - stockCap;
+    } else clay = stock.clay + value.clay;
+
+    if (stock.iron + value.iron > stockCap) {
+      iron = stockCap;
+      over.iron = stock.iron + value.iron - stockCap;
+    } else iron = stock.iron + value.iron;
+
+    newStock = { wood, clay, iron };
   } else if (operation === 'minus') {
     newStock = {
       wood: resourcesStock.wood - value.wood,
@@ -79,7 +111,7 @@ const updateResourcesStock = (
     throw new Error('Nieprawidłowa operacja: ' + operation);
   }
   setResourcesStock(newStock);
-  return newStock;
+  return over; // todo 4 dodac sprawdzanie czy jest wystarczajaco miejsca w spichrzu, todo 5 komunikat ile surki przepadło
 };
 
 const hasEnoughResources = (costs: BuildingResources): boolean => {
@@ -139,6 +171,40 @@ const updateVillageState = (buildingType: string, level: number): VillageState =
   return newVillageState;
 };
 
+const setSpecialFunctions = (buildingType: string, buildingLeveL: number): string => {
+  const { getWorkersCapByLvl, getStockCapByLvl, getRatuszTimeFactorByLvl } =
+    buildingsData();
+  let msg = '';
+
+  if (buildingType === 'ratusz') {
+    const newTimeFactor = getRatuszTimeFactorByLvl(buildingLeveL);
+    setRatuszTimeFactor(newTimeFactor);
+    msg = `Ustwiono nowy współczynnik czasowy na ${newTimeFactor}%.`;
+  }
+  if (buildingType === 'zagroda') {
+    const newCap = getWorkersCapByLvl(buildingLeveL);
+    setWorkersCap(newCap);
+    msg = `Ustawiono nową pojemność zagrody na ${newCap} miejsc.`;
+    console.log(msg);
+  }
+  if (buildingType === 'spichlerz') {
+    const newCap = getStockCapByLvl(buildingLeveL);
+    setStockCap(newCap);
+    msg = `Ustawiono nową pojemność spichlerza na ${newCap} miejsc`;
+  }
+
+  return msg;
+};
+
+const hasEnoughStockCap = (buildingCost: BuildingResources): boolean => {
+  const stockCap = getStockCap();
+  return (
+    stockCap >= buildingCost.wood &&
+    stockCap >= buildingCost.clay &&
+    stockCap >= buildingCost.iron
+  );
+};
+
 interface IterationData {
   building: string;
   level: number;
@@ -152,15 +218,22 @@ interface IterationData {
   newVillageState: VillageState;
   buildTime: number;
   stockAfterStartBuilding: BuildingResources;
+  stockAfterFinishBuilding: BuildingResources;
   generatedDuringBuilding: BuildingResources;
+  specialAdded: string;
+  currStockCap: number;
+  currWorkersCap: number;
+  workersNeeded: number;
+  employedWorkers: number;
+  stockOver: BuildingResources;
 }
 
 export const simulate = (queue: QueueBuilding[]) => {
-  const { getBuildingCosts } = buildingsData();
+  const { getBuildingCosts, getWorkersNeeded } = buildingsData();
   const { getBuildTime } = buildingsTimeData();
   const simulationLogs: IterationData[] = [];
 
-  for (const item of queue) {
+  for (const queueItem of queue) {
     const iterationData: IterationData = {
       building: '',
       level: 0,
@@ -171,22 +244,56 @@ export const simulate = (queue: QueueBuilding[]) => {
       missingResources: { wood: 0, clay: 0, iron: 0 },
       generatedResources: { wood: 0, clay: 0, iron: 0 },
       newProduction: { wood: 5, clay: 5, iron: 5 },
-      newVillageState: { tartak: 0, cegielnia: 0, hutaZelaza: 0 },
+      newVillageState: {
+        ratusz: 1,
+        tartak: 0,
+        cegielnia: 0,
+        hutaZelaza: 0,
+        zagroda: 1,
+        spichlerz: 1,
+      },
       buildTime: 1,
       stockAfterStartBuilding: { wood: 0, clay: 0, iron: 0 },
+      stockAfterFinishBuilding: { wood: 0, clay: 0, iron: 0 },
       generatedDuringBuilding: { wood: 0, clay: 0, iron: 0 },
+      specialAdded: '',
+      currStockCap: 1000,
+      currWorkersCap: 240,
+      workersNeeded: 1,
+      employedWorkers: 5,
+      stockOver: { wood: 0, clay: 0, iron: 0 },
     };
-    const buildingLevel = item.level; // ustal lvl budynku
-    const buildingType = item.building; // ustal typ budynku
+    const buildingLevel = queueItem.level; // ustal lvl budynku
+    const buildingType = queueItem.building; // ustal typ budynku
     const buildingCost = getBuildingCosts(buildingType, buildingLevel); // ustal koszty bieżącego budynku
     const production = getProductionStock(); // ustal aktualną produkcję wioski
     const currentStock = getResourcesStock(); // ustal aktualny stan spichlerza
+    iterationData.currStockCap = getStockCap(); // ustal max pojemnosc spichlerza
+    const employedWorkers = getEmpolyedWorkers();
+    const freeWorkers = getWorkersCap() - employedWorkers; // ustal ilosc wolnego miejsca w zagrodzie
+    const workersNeeded = getWorkersNeeded(buildingType, buildingLevel); // ustal ilosc potrzebnych pracowników
 
     iterationData.building = buildingType;
     iterationData.level = buildingLevel;
     iterationData.costs = buildingCost;
     iterationData.stock = currentStock;
     iterationData.production = production;
+
+    if (!(freeWorkers >= workersNeeded)) {
+      throw console.error(
+        `Nie można wybudować ${buildingType} level ${buildingLevel}, ponieważ nie ma wystarczająco miejsca w zagrodzie.`,
+      );
+    } else {
+      iterationData.currWorkersCap = getWorkersCap();
+      iterationData.workersNeeded = workersNeeded;
+      iterationData.employedWorkers = setEmployedWorkers(employedWorkers + workersNeeded);
+      console.log(iterationData.employedWorkers);
+    }
+
+    if (!hasEnoughStockCap(buildingCost))
+      throw console.error(
+        `Nie można wybudować ${buildingType} level ${buildingLevel}, ponieważ spichlerz jest za mały.`,
+      );
 
     if (!hasEnoughResources(buildingCost)) {
       const missingResources = calcMissingResources(currentStock, buildingCost);
@@ -202,19 +309,26 @@ export const simulate = (queue: QueueBuilding[]) => {
     }
 
     // proces budowania
-    const buildTime = getBuildTime(buildingType, buildingLevel); // sprawdz ile czasu bedzie sie budowac
+    const ratuszTimeFactor = getRatuszTimeFactor();
+    const buildTime = Math.round(
+      ratuszTimeFactor * getBuildTime(buildingType, buildingLevel), // sprawdz ile czasu bedzie sie budowac
+    );
     iterationData.buildTime = buildTime;
-    iterationData.stockAfterStartBuilding = updateResourcesStock(buildingCost, 'minus'); // odejmij surowce ze spichlerza
-    // odejmij miejsce z zagrody
+    updateResourcesStock(buildingCost, 'minus'); // odejmij surowce ze spichlerza
+    iterationData.stockAfterStartBuilding = getResourcesStock();
 
     const generatedDuringBuilding = calcGeneratedResources(buildTime, production); // zasymuluj oczekiwanie: dodaj surowce które się wytworza w czasie oczekiwania
-    updateResourcesStock(generatedDuringBuilding, 'plus');
+
+    iterationData.stockOver = updateResourcesStock(generatedDuringBuilding, 'plus');
+    iterationData.stockAfterFinishBuilding = getResourcesStock();
     iterationData.generatedDuringBuilding = generatedDuringBuilding;
 
     iterationData.newVillageState = updateVillageState(buildingType, buildingLevel); // update stanu wioski i zapisanie
 
     if (ecoBuildingsList.includes(buildingType))
       iterationData.newProduction = updateProductionStock(buildingType, buildingLevel); // modyfikacja produkcji jesli wpływa i zapisanie
+
+    iterationData.specialAdded = setSpecialFunctions(buildingType, buildingLevel); // ustawienie nowej pojemnosci zagrody (pozniej itp)
 
     simulationLogs.push(iterationData);
   }
