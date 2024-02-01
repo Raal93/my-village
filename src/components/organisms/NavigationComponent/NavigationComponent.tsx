@@ -6,16 +6,16 @@ const NavigationComponent = () => {
     <div>
       <ul>
         <li>
-          <NavLink to="/my-village/">Wioska</NavLink>
+          <NavLink to="/">Wioska</NavLink>
         </li>
         <li>
-          <NavLink to="/my-village/ratusz">Ratusz</NavLink>
+          <NavLink to="/ratusz">Ratusz</NavLink>
         </li>
         <li>
-          <NavLink to="/my-village/settings">Ustawienia</NavLink>
+          <NavLink to="/settings">Ustawienia</NavLink>
         </li>
         <li>
-          <NavLink to="/my-village/simulator">Symulator</NavLink>
+          <NavLink to="/simulator">Symulator</NavLink>
         </li>
       </ul>
     </div>
