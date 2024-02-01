@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import React from 'react';
 
 import { manageResources } from '../../../logic/villageLogic';
 import { stockUpdater } from '../../../logic/villageLogic';
