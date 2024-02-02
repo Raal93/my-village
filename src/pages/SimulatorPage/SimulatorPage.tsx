@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import QueueComponent from '../../components/molecules/QueueComponent/QueueComponent';
 import { simulate } from '../../logic/simulatorLogic';
@@ -11,15 +11,15 @@ const SimulatorPage = () => {
     building: string;
     level: number;
   }
-  // interface Queue {
-  //   [key: string]: QueueItem;
-  // }
 
   const queueBasic: QueueItem[] = [
     { building: 'tartak', level: 1 },
     { building: 'cegielnia', level: 1 },
     { building: 'hutaZelaza', level: 1 },
     { building: 'ratusz', level: 2 },
+    { building: 'ratusz', level: 3 },
+    { building: 'ratusz', level: 4 },
+    { building: 'ratusz', level: 5 },
     { building: 'zagroda', level: 2 },
     { building: 'spichlerz', level: 2 },
     { building: 'tartak', level: 2 },
@@ -145,10 +145,51 @@ const SimulatorPage = () => {
     { building: 'hutaZelaza', level: 30 },
   ];
 
+  const resultBasic = {
+    building: '',
+    level: 0,
+    costs: { wood: 0, clay: 0, iron: 0 },
+    stock: { wood: 0, clay: 0, iron: 0 },
+    production: { wood: 5, clay: 5, iron: 5 },
+    timeWaited: 0,
+    missingResources: { wood: 0, clay: 0, iron: 0 },
+    generatedResources: { wood: 0, clay: 0, iron: 0 },
+    newProduction: { wood: 5, clay: 5, iron: 5 },
+    newVillageState: {
+      ratusz: 1,
+      tartak: 0,
+      cegielnia: 0,
+      hutaZelaza: 0,
+      zagroda: 1,
+      spichlerz: 1,
+    },
+    buildTime: 1,
+    stockAfterStartBuilding: { wood: 0, clay: 0, iron: 0 },
+    stockAfterFinishBuilding: { wood: 0, clay: 0, iron: 0 },
+    generatedDuringBuilding: { wood: 0, clay: 0, iron: 0 },
+    specialAdded: '',
+    currStockCap: 1000,
+    currWorkersCap: 240,
+    workersNeeded: 1,
+    employedWorkers: 5,
+    stockOver: { wood: 0, clay: 0, iron: 0 },
+  };
+
   const [totalTime, setTotalTime] = useState('');
   const [buildTime, setBuildTime] = useState('');
   const [waitedTime, setWaitedTime] = useState('');
   const [queue, setQueue] = useState(queueBasic);
+  const [simulationResult, setSimulationResult] = useState([resultBasic]);
+
+  useEffect(() => {
+    const result = simulate(queueBasic);
+    setSimulationResult(result);
+    const time = getTime(result);
+    setTotalTime(convertSecToTime(time.buildTime + time.waited));
+    setBuildTime(convertSecToTime(time.buildTime));
+    setWaitedTime(convertSecToTime(time.waited));
+    console.log(result);
+  }, []);
 
   const convertSecToTime = (seconds: number): string => {
     let timeLeft = 0;
@@ -164,12 +205,12 @@ const SimulatorPage = () => {
   };
 
   const doSimulation = () => {
-    const result = simulate(queue);
-    const time = getTime(result);
+    // const result = simulate(queue);
+    const time = getTime(simulationResult);
     setTotalTime(convertSecToTime(time.buildTime + time.waited));
     setBuildTime(convertSecToTime(time.buildTime));
     setWaitedTime(convertSecToTime(time.waited));
-    console.log(result);
+    console.log(simulationResult);
   };
 
   return (

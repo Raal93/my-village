@@ -24,3 +24,8 @@ export const Icon = styled.img`
   height: 100%;
   margin-right: 10px;
 `;
+
+export const CellBuldingName = styled.div`
+  width: 170px;
+  text-align: left;
+`;

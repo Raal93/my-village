@@ -185,7 +185,6 @@ const setSpecialFunctions = (buildingType: string, buildingLeveL: number): strin
     const newCap = getWorkersCapByLvl(buildingLeveL);
     setWorkersCap(newCap);
     msg = `Ustawiono nową pojemność zagrody na ${newCap} miejsc.`;
-    console.log(msg);
   }
   if (buildingType === 'spichlerz') {
     const newCap = getStockCapByLvl(buildingLeveL);
@@ -287,7 +286,6 @@ export const simulate = (queue: QueueBuilding[]) => {
       iterationData.currWorkersCap = getWorkersCap();
       iterationData.workersNeeded = workersNeeded;
       iterationData.employedWorkers = setEmployedWorkers(employedWorkers + workersNeeded);
-      console.log(iterationData.employedWorkers);
     }
 
     if (!hasEnoughStockCap(buildingCost))

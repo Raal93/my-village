@@ -1,6 +1,11 @@
 import React from 'react';
 
-import { Icon, QueueDataCell, QueueDataRow } from './QueueItemComponent.styles';
+import {
+  CellBuldingName,
+  Icon,
+  QueueDataCell,
+  QueueDataRow,
+} from './QueueItemComponent.styles';
 
 interface QueueItem {
   building: string;
@@ -26,7 +31,9 @@ const QueueItemComponent = ({ building, level }: QueueItem) => {
     <QueueDataRow>
       <QueueDataCell>
         <Icon src={getIcon(building, level)} alt={`${building}.png`} />
-        {convertBuildingName(building)} Poziom {level}
+        <CellBuldingName>
+          {convertBuildingName(building)} Poziom {level}
+        </CellBuldingName>
       </QueueDataCell>
     </QueueDataRow>
   );
