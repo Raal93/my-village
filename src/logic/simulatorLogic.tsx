@@ -204,6 +204,23 @@ const hasEnoughStockCap = (buildingCost: BuildingResources): boolean => {
   );
 };
 
+const resetAllData = () => {
+  setResourcesStock({ wood: 200, clay: 200, iron: 200 });
+  setProductionStock({ wood: 5, clay: 5, iron: 5 });
+  setVillageState({
+    ratusz: 1,
+    tartak: 0,
+    cegielnia: 0,
+    hutaZelaza: 0,
+    zagroda: 1,
+    spichlerz: 1,
+  });
+  setWorkersCap(240);
+  setEmployedWorkers(5);
+  setStockCap(1000);
+  setRatuszTimeFactor(95);
+};
+
 interface IterationData {
   building: string;
   level: number;
@@ -228,6 +245,7 @@ interface IterationData {
 }
 
 export const simulate = (queue: QueueBuilding[]) => {
+  resetAllData();
   const { getBuildingCosts, getWorkersNeeded } = buildingsData();
   const { getBuildTime } = buildingsTimeData();
   const simulationLogs: IterationData[] = [];
@@ -280,7 +298,7 @@ export const simulate = (queue: QueueBuilding[]) => {
 
     if (!(freeWorkers >= workersNeeded)) {
       throw console.error(
-        `Nie można wybudować ${buildingType} level ${buildingLevel}, ponieważ nie ma wystarczająco miejsca w zagrodzie.`,
+        `Nie można wybudować ${buildingType} level ${buildingLevel}, ponieważ nie ma wystarczająco miejsca w zagrodzie. Wolnych pracowników: ${freeWorkers}. Potrzebnych pracowników: ${workersNeeded}`,
       );
     } else {
       iterationData.currWorkersCap = getWorkersCap();

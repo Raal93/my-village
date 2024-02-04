@@ -5,7 +5,7 @@ const NavigationComponent = () => {
   return (
     <div>
       <ul>
-        <li>
+        {/* <li>
           <NavLink to="/my-village/">Wioska</NavLink>
         </li>
         <li>
@@ -13,7 +13,7 @@ const NavigationComponent = () => {
         </li>
         <li>
           <NavLink to="/my-village/settings">Ustawienia</NavLink>
-        </li>
+        </li> */}
         <li>
           <NavLink to="/my-village/simulator">Symulator</NavLink>
         </li>

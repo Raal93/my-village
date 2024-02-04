@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-export const QueueDataRow = styled.tr`
-  background-color: #fff3d3;
-`;
+// export const QueueDataRow = styled.tr`
+//   background-color: #fff3d3;
+// `;
 
 export const QueueDataCell = styled.td`
   width: 400px;

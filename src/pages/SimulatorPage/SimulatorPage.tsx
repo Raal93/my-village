@@ -12,7 +12,7 @@ const SimulatorPage = () => {
     level: number;
   }
 
-  const queueBasic: QueueItem[] = [
+  const initialQueue: QueueItem[] = [
     { building: 'tartak', level: 1 },
     { building: 'cegielnia', level: 1 },
     { building: 'hutaZelaza', level: 1 },
@@ -178,11 +178,11 @@ const SimulatorPage = () => {
   const [totalTime, setTotalTime] = useState('');
   const [buildTime, setBuildTime] = useState('');
   const [waitedTime, setWaitedTime] = useState('');
-  const [queue, setQueue] = useState(queueBasic);
+  const [queue, setQueue] = useState<QueueItem[]>(initialQueue);
   const [simulationResult, setSimulationResult] = useState([resultBasic]);
 
   useEffect(() => {
-    const result = simulate(queueBasic);
+    const result = simulate(initialQueue);
     setSimulationResult(result);
     const time = getTime(result);
     setTotalTime(convertSecToTime(time.buildTime + time.waited));
@@ -204,22 +204,59 @@ const SimulatorPage = () => {
     );
   };
 
-  const doSimulation = () => {
-    // const result = simulate(queue);
-    const time = getTime(simulationResult);
+  const doSimulation = (queue: QueueItem[]) => {
+    const result = simulate(queue);
+    const time = getTime(result);
     setTotalTime(convertSecToTime(time.buildTime + time.waited));
     setBuildTime(convertSecToTime(time.buildTime));
     setWaitedTime(convertSecToTime(time.waited));
-    console.log(simulationResult);
+    console.log(result);
+  };
+
+  // Funkcja obsługująca koniec przeciągania
+  const onDragEnd = (result) => {
+    // console.log('Id przeciąganego elementu: ' + result.draggableId);
+    // console.log('Początkowy index: ' + result.source.index);
+    // console.log('Index docelowy: ' + result.destination.index);
+
+    const { source, destination } = result;
+    if (!destination) return; // Jeśli element został upuszczony poza listę, nic nie rób
+    if (
+      source.index === destination.index &&
+      source.droppableId === destination.droppableId
+    )
+      return; // Jeśli pozycja elementu się nie zmieniła, również nic nie rób
+
+    const newQueue = Array.from(queue); // Przypisanie nowej tablicy do zmiennej, aby nie modyfikować stanu bezpośrednio
+    const [reorderedItem] = newQueue.splice(source.index, 1); // Usunięcie przeciąganego elementu z jego pierwotnej pozycji
+    newQueue.splice(destination.index, 0, reorderedItem); // Wstawienie elementu na nową pozycję
+
+    const reorderedQueue = reorderQueue(newQueue, queue[result.draggableId].building);
+
+    setQueue(reorderedQueue);
+    doSimulation(reorderedQueue);
+  };
+
+  const reorderQueue = (queue: QueueItem[], dragged: string): QueueItem[] => {
+    console.log('przeciągnięto ' + dragged);
+    let currLvl =
+      dragged === 'ratusz' || dragged === 'zagroda' || dragged === 'spichlerz' ? 2 : 1;
+    const reorderedQueue = queue.map((current) => {
+      if (current.building === dragged) {
+        return { ...current, level: currLvl++ };
+      } else return current;
+    });
+
+    return reorderedQueue;
   };
 
   return (
     <SimulatorWrapper>
-      <button onClick={() => doSimulation()}>Wykonaj symulację</button>
+      <button onClick={() => doSimulation(queue)}>Wykonaj symulację</button>
       <div>Rozbudowa wioski zajęła: {totalTime}</div>
       <div>W tym budowało: {buildTime}</div>
       <div>czekało na surowce: {waitedTime}</div>
-      <QueueComponent queue={queue} />
+      <QueueComponent queue={queue} onDragEnd={onDragEnd} />
     </SimulatorWrapper>
   );
 };

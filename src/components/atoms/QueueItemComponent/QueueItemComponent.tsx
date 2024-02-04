@@ -1,11 +1,6 @@
 import React from 'react';
 
-import {
-  CellBuldingName,
-  Icon,
-  QueueDataCell,
-  QueueDataRow,
-} from './QueueItemComponent.styles';
+import { CellBuldingName, Icon, QueueDataCell } from './QueueItemComponent.styles';
 
 interface QueueItem {
   building: string;
@@ -28,14 +23,12 @@ const QueueItemComponent = ({ building, level }: QueueItem) => {
   };
 
   return (
-    <QueueDataRow>
-      <QueueDataCell>
-        <Icon src={getIcon(building, level)} alt={`${building}.png`} />
-        <CellBuldingName>
-          {convertBuildingName(building)} Poziom {level}
-        </CellBuldingName>
-      </QueueDataCell>
-    </QueueDataRow>
+    <QueueDataCell>
+      <Icon src={getIcon(building, level)} alt={`${building}.png`} />
+      <CellBuldingName>
+        {convertBuildingName(building)} Poziom {level}
+      </CellBuldingName>
+    </QueueDataCell>
   );
 };
 

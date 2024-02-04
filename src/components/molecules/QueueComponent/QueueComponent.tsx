@@ -1,10 +1,12 @@
 import React from 'react';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
 import QueueItemComponent from '../../atoms/QueueItemComponent/QueueItemComponent';
 import { QueueTable, QueueWrapper } from './QueueComponent.styles';
 
 interface QueueProps {
   queue: QueueItem[];
+  onDragEnd: (result: any) => void;
 }
 
 interface QueueItem {
@@ -12,17 +14,34 @@ interface QueueItem {
   level: number;
 }
 
-const QueueComponent = ({ queue }: QueueProps) => {
+const QueueComponent = ({ queue, onDragEnd }: QueueProps) => {
   return (
-    <QueueWrapper>
-      <QueueTable>
-        <tbody>
-          {queue.map((queueItem: QueueItem, i: number) => (
-            <QueueItemComponent {...queueItem} key={i} />
-          ))}
-        </tbody>
-      </QueueTable>
-    </QueueWrapper>
+    <DragDropContext onDragEnd={onDragEnd}>
+      <Droppable droppableId="droppable-queue">
+        {(provided) => (
+          <QueueWrapper ref={provided.innerRef} {...provided.droppableProps}>
+            <QueueTable>
+              <tbody>
+                {queue.map((queueItem: QueueItem, index: number) => (
+                  <Draggable key={index} draggableId={String(index)} index={index}>
+                    {(provided) => (
+                      <tr
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        <QueueItemComponent {...queueItem} />
+                      </tr>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </tbody>
+            </QueueTable>
+          </QueueWrapper>
+        )}
+      </Droppable>
+    </DragDropContext>
   );
 };
 
