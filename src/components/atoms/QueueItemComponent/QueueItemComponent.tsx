@@ -1,13 +1,24 @@
 import React from 'react';
 
-import { CellBuldingName, Icon, QueueDataCell } from './QueueItemComponent.styles';
+import {
+  CellBuldingName,
+  DeleteBtn,
+  Icon,
+  QueueDataCell,
+} from './QueueItemComponent.styles';
 
-interface QueueItem {
+// interface QueueItem {
+//   building: string;
+//   level: number;
+// }
+
+interface QueueProps {
   building: string;
   level: number;
+  delFromQueue: (buildingType: string, buildingLevel: number) => void;
 }
 
-const QueueItemComponent = ({ building, level }: QueueItem) => {
+const QueueItemComponent = ({ building, level, delFromQueue }: QueueProps) => {
   const convertBuildingName = (building: string): string => {
     if (building === 'hutaZelaza') return 'Huta żelaza';
     return building.charAt(0).toLocaleUpperCase() + building.slice(1);
@@ -26,7 +37,8 @@ const QueueItemComponent = ({ building, level }: QueueItem) => {
     <QueueDataCell>
       <Icon src={getIcon(building, level)} alt={`${building}.png`} />
       <CellBuldingName>
-        {convertBuildingName(building)} Poziom {level}
+        {convertBuildingName(building)} Poziom {level}{' '}
+        <DeleteBtn onClick={() => delFromQueue(building, level)}>X</DeleteBtn>
       </CellBuldingName>
     </QueueDataCell>
   );

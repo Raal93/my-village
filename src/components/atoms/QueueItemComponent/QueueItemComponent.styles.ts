@@ -26,6 +26,14 @@ export const Icon = styled.img`
 `;
 
 export const CellBuldingName = styled.div`
-  width: 170px;
+  width: 200px;
   text-align: left;
+`;
+
+export const DeleteBtn = styled.button`
+  color: red;
+  font-weight: 700;
+  margin: 0 0 0 5px;
+  padding: 1px 5px 0 5px;
+  line-height: 0.85;
 `;
