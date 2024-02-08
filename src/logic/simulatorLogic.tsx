@@ -54,7 +54,7 @@ const getWorkersCap = (): number => workersCap;
 const setWorkersCap = (newWorkersCap: number) => (workersCap = newWorkersCap);
 const getStockCap = (): number => stockCap;
 const setStockCap = (newStockCap: number) => (stockCap = newStockCap);
-const getEmpolyedWorkers = (): number => employedWorkers;
+const getEmployedWorkers = (): number => employedWorkers;
 const setEmployedWorkers = (newEmpoyedWorkers: number) =>
   (employedWorkers = newEmpoyedWorkers);
 const getRatuszTimeFactor = (): number => ratuszTimeFactor;
@@ -71,6 +71,27 @@ const updateProductionStock = (
   const newProductionStock = { ...productionStock, [resourceType]: newProductionByType }; // wrzuć produkcję aktualnego do całej produkcji
   setProductionStock(newProductionStock); // ustaw nową produkcję
   return newProductionStock; // zwróć nową produkcję
+};
+
+const stockUpgradeSuggestion = (
+  costs: BuildingResources,
+  building: string,
+  lvl: number,
+) => {
+  const stockCap = getStockCap();
+
+  if (costs.wood * 2 > stockCap || costs.clay * 2 > stockCap || costs.iron * 2 > stockCap)
+    console.log(
+      `Zalecam rozbudowę spichlerza przed ${building} poziom ${lvl}. Koszty ||${costs.wood}|${costs.clay}|${costs.iron}|| Pojemność ${stockCap}`,
+    );
+};
+
+const workersUpgrSugg = (building: string, lvl: number) => {
+  if (getEmployedWorkers() * 1.1 > getWorkersCap()) {
+    console.log(
+      `Zalecam rozbudowę zagrody przed ${building} poziom ${lvl}. Zagroda: ${employedWorkers}/${workersCap}`,
+    );
+  }
 };
 
 const updateResourcesStock = (
@@ -204,6 +225,17 @@ const hasEnoughStockCap = (buildingCost: BuildingResources): boolean => {
   );
 };
 
+const addBuildingResources = (
+  ressA: BuildingResources,
+  ressB: BuildingResources,
+): BuildingResources => {
+  return {
+    wood: ressA.wood + ressB.wood,
+    clay: ressA.clay + ressB.clay,
+    iron: ressA.iron + ressB.iron,
+  };
+};
+
 const resetAllData = () => {
   setResourcesStock({ wood: 200, clay: 200, iron: 200 });
   setProductionStock({ wood: 5, clay: 5, iron: 5 });
@@ -283,12 +315,14 @@ export const simulate = (queue: QueueBuilding[]) => {
     const buildingLevel = queueItem.level; // ustal lvl budynku
     const buildingType = queueItem.building; // ustal typ budynku
     const buildingCost = getBuildingCosts(buildingType, buildingLevel); // ustal koszty bieżącego budynku
+    stockUpgradeSuggestion(buildingCost, buildingType, buildingLevel);
     const production = getProductionStock(); // ustal aktualną produkcję wioski
     const currentStock = getResourcesStock(); // ustal aktualny stan spichlerza
     iterationData.currStockCap = getStockCap(); // ustal max pojemnosc spichlerza
-    const employedWorkers = getEmpolyedWorkers();
+    const employedWorkers = getEmployedWorkers();
     const freeWorkers = getWorkersCap() - employedWorkers; // ustal ilosc wolnego miejsca w zagrodzie
     const workersNeeded = getWorkersNeeded(buildingType, buildingLevel); // ustal ilosc potrzebnych pracowników
+    workersUpgrSugg(buildingType, buildingLevel);
 
     iterationData.building = buildingType;
     iterationData.level = buildingLevel;
@@ -344,7 +378,8 @@ export const simulate = (queue: QueueBuilding[]) => {
 
     const generatedDuringBuilding = calcGeneratedResources(buildTime, production); // zasymuluj oczekiwanie: dodaj surowce które się wytworza w czasie oczekiwania
 
-    iterationData.stockOver = updateResourcesStock(generatedDuringBuilding, 'plus');
+    const currOver = updateResourcesStock(generatedDuringBuilding, 'plus');
+    iterationData.stockOver = addBuildingResources(iterationData.stockOver, currOver);
     iterationData.stockAfterFinishBuilding = getResourcesStock();
     iterationData.generatedDuringBuilding = generatedDuringBuilding;
 
