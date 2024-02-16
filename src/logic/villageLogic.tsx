@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { productionData } from './vilageData';
+import { productionData } from '../data/vilageData';
 
 const HOUR_TO_SEC = 60 * 60;
 const WORLD_SPEED = 1.6;

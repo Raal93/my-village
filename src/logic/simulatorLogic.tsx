@@ -1,5 +1,5 @@
+import { buildingsData, buildingsTimeData } from '../data/simulatorData';
 import { BuildingResources, QueueBuilding, Time, VillageState } from '../models/models';
-import { buildingsData, buildingsTimeData } from './simulatorData';
 
 const ecoBuildingsList = ['tartak', 'cegielnia', 'hutaZelaza'];
 const HOUR_TO_SECOND = 1 * 60 * 60;
