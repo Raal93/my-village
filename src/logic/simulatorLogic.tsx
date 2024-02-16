@@ -360,19 +360,11 @@ export const simulate = (queue: QueueBuilding[]) => {
 
     // proces budowania
     const ratuszTimeFactor = getRatuszTimeFactor();
-    // console.log('Time factor: ' + ratuszTimeFactor);
-    // console.log('Pobieranie czasu dla: ' + buildingType + ' level ' + buildingLevel);
     const tmp = getBuildTime(buildingType, buildingLevel);
     const tmp2 = tmp * ratuszTimeFactor;
     const buildTime = Math.round(tmp2);
     iterationData.buildTime = buildTime;
-    // console.log('1. Pobrano czas budowy: ' + getBuildTime(buildingType, buildingLevel));
-    // console.log(
-    //   '2. Pobrano czas budowy: ' +
-    //     Math.round(
-    //       ratuszTimeFactor * getBuildTime(buildingType, buildingLevel), // sprawdz ile czasu bedzie sie budowac
-    //     ),
-    // );
+
     updateResourcesStock(buildingCost, 'minus'); // odejmij surowce ze spichlerza
     iterationData.stockAfterStartBuilding = getResourcesStock();
 

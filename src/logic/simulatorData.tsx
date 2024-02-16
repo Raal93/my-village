@@ -749,7 +749,8 @@ export const buildingsData = () => {
       throw new Error(`Nie znaleziono poziomu: ${level} dla budynku typu: ${type}`);
     }
 
-    return buildingLevelData.resources;
+    // return buildingLevelData.resources;
+    return { wood: 1, clay: 1, iron: 1 };
   };
 
   const getProduction = (type: string, level: number): number => {
