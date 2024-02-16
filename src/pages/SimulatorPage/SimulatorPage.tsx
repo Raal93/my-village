@@ -4,19 +4,10 @@ import React, { useEffect } from 'react';
 import QueueComponent from '../../components/molecules/QueueComponent/QueueComponent';
 import { simulate } from '../../logic/simulatorLogic';
 import { getTime } from '../../logic/simulatorLogic';
+import { BuildingResources, QueueItem } from '../../models/models';
 import { BelowFixed, FixedTop, SimulatorWrapper } from './SimulatorPage.styles';
 
 const SimulatorPage = () => {
-  interface QueueItem {
-    building: string;
-    level: number;
-  }
-  interface BuildingResources {
-    wood: number;
-    clay: number;
-    iron: number;
-  }
-
   const optimalQueue: QueueItem[] = [
     { building: 'tartak', level: 1 },
     { building: 'cegielnia', level: 1 },

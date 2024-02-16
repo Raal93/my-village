@@ -7,11 +7,6 @@ import {
   QueueDataCell,
 } from './QueueItemComponent.styles';
 
-// interface QueueItem {
-//   building: string;
-//   level: number;
-// }
-
 interface QueueProps {
   building: string;
   level: number;

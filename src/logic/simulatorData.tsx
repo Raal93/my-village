@@ -1,27 +1,6 @@
+import { allBuldingData, BuildingResources } from '../models/models';
+
 export const buildingsData = () => {
-  interface BuildingResources {
-    wood: number;
-    clay: number;
-    iron: number;
-  }
-
-  interface BuildingLevelData {
-    resources: BuildingResources;
-    workers: number;
-    production: number;
-  }
-
-  interface BuildingData {
-    [level: string]: BuildingLevelData;
-  }
-
-  interface allBuldingData {
-    [key: string]: BuildingData;
-    tartak: BuildingData;
-    cegielnia: BuildingData;
-    hutaZelaza: BuildingData;
-  }
-
   const allBuildingData = (): allBuldingData => ({
     ratusz: {
       1: { resources: { wood: 90, clay: 80, iron: 70 }, workers: 5, production: 0 },
@@ -836,9 +815,6 @@ export const buildingsTimeData = () => {
     if (!buildingTimes || level <= 0 || level > buildingTimes.length) {
       throw new Error('Invalid building type or level');
     }
-    // console.log(
-    //   'Zwracanie czasu budowy dla lvlu: ' + level + ': ' + buildingTimes[level - 1],
-    // );
     return buildingTimes[level - 1];
   };
 

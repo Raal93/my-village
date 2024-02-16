@@ -1,28 +1,5 @@
+import { BuildingResources, QueueBuilding, Time, VillageState } from '../models/models';
 import { buildingsData, buildingsTimeData } from './simulatorData';
-interface QueueBuilding {
-  building: string;
-  level: number;
-}
-
-interface BuildingResources {
-  wood: number;
-  clay: number;
-  iron: number;
-}
-
-interface VillageState {
-  ratusz: number;
-  tartak: number;
-  cegielnia: number;
-  hutaZelaza: number;
-  zagroda: number;
-  spichlerz: number;
-}
-
-interface Time {
-  waited: number;
-  buildTime: number;
-}
 
 const ecoBuildingsList = ['tartak', 'cegielnia', 'hutaZelaza'];
 const HOUR_TO_SECOND = 1 * 60 * 60;
