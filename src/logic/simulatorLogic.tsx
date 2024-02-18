@@ -1,4 +1,4 @@
-import { buildingsData, buildingsTimeData } from '../data/simulatorData';
+import { buildingParams, buildingsTimeData } from '../data/simulatorData';
 import { BuildingResources, QueueBuilding, Time, VillageState } from '../models/models';
 
 const ecoBuildingsList = ['tartak', 'cegielnia', 'hutaZelaza'];
@@ -42,7 +42,7 @@ const updateProductionStock = (
   buildingType: string,
   buildingLevel: number,
 ): BuildingResources => {
-  const { getProduction } = buildingsData(); // zainicjuj zewnętrzną funkcję
+  const { getProduction } = buildingParams(); // zainicjuj zewnętrzną funkcję
   const newProductionByType = getProduction(buildingType, buildingLevel); // pobierz produkcję dla aktualnego budynku
   const resourceType = getResourceType(buildingType); // znajdź typ surowca po nazwie budynku
   const newProductionStock = { ...productionStock, [resourceType]: newProductionByType }; // wrzuć produkcję aktualnego do całej produkcji
@@ -171,7 +171,7 @@ const updateVillageState = (buildingType: string, level: number): VillageState =
 
 const setSpecialFunctions = (buildingType: string, buildingLeveL: number): string => {
   const { getWorkersCapByLvl, getStockCapByLvl, getRatuszTimeFactorByLvl } =
-    buildingsData();
+    buildingParams();
   let msg = '';
 
   if (buildingType === 'ratusz') {
@@ -255,7 +255,7 @@ interface IterationData {
 
 export const simulate = (queue: QueueBuilding[]) => {
   resetAllData();
-  const { getBuildingCosts, getWorkersNeeded } = buildingsData();
+  const { getBuildingCosts, getWorkersNeeded } = buildingParams();
   const { getBuildTime } = buildingsTimeData();
   const simulationLogs: IterationData[] = [];
 

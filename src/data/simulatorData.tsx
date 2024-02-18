@@ -1,6 +1,6 @@
 import { allBuldingData, BuildingResources } from '../models/models';
 
-export const buildingsData = () => {
+export const buildingParams = () => {
   const allBuildingData = (): allBuldingData => ({
     ratusz: {
       1: { resources: { wood: 90, clay: 80, iron: 70 }, workers: 5, production: 0 },
@@ -106,7 +106,6 @@ export const buildingsData = () => {
         production: 0,
       },
     },
-
     tartak: {
       '1': { resources: { wood: 50, clay: 60, iron: 40 }, workers: 5, production: 48 },
       '2': { resources: { wood: 63, clay: 77, iron: 50 }, workers: 1, production: 56 },
@@ -728,8 +727,7 @@ export const buildingsData = () => {
       throw new Error(`Nie znaleziono poziomu: ${level} dla budynku typu: ${type}`);
     }
 
-    // return buildingLevelData.resources;
-    return { wood: 1, clay: 1, iron: 1 };
+    return buildingLevelData.resources;
   };
 
   const getProduction = (type: string, level: number): number => {

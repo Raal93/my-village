@@ -1,19 +1,10 @@
 import { useEffect, useState } from 'react';
 
 import { productionData } from '../data/vilageData';
+import { ResourceProduction, ResourceStock } from '../models/models';
 
 const HOUR_TO_SEC = 60 * 60;
 const WORLD_SPEED = 1.6;
-interface ResourceStock {
-  wood: number;
-  clay: number;
-  iron: number;
-}
-interface ResourceProduction {
-  wood: { level: number; production: number };
-  clay: { level: number; production: number };
-  iron: { level: number; production: number };
-}
 
 export const stockUpdater = (
   setStock: React.Dispatch<React.SetStateAction<ResourceStock>>,

@@ -50,3 +50,15 @@ export interface QueueItem {
   building: string;
   level: number;
 }
+
+export interface ResourceStock {
+  wood: number;
+  clay: number;
+  iron: number;
+}
+
+export interface ResourceProduction {
+  wood: { level: number; production: number };
+  clay: { level: number; production: number };
+  iron: { level: number; production: number };
+}
