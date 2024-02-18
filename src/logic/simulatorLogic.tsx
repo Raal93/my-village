@@ -1,4 +1,6 @@
-import { buildingParams, buildingsTimeData } from '../data/simulatorData';
+import { buildingTimeData } from '../data/buildingTimeData';
+import { buildingParams } from '../data/simulatorData';
+import { specialFunctionsData } from '../data/specialFunctionsData';
 import { BuildingResources, QueueBuilding, Time, VillageState } from '../models/models';
 
 const ecoBuildingsList = ['tartak', 'cegielnia', 'hutaZelaza'];
@@ -171,7 +173,7 @@ const updateVillageState = (buildingType: string, level: number): VillageState =
 
 const setSpecialFunctions = (buildingType: string, buildingLeveL: number): string => {
   const { getWorkersCapByLvl, getStockCapByLvl, getRatuszTimeFactorByLvl } =
-    buildingParams();
+    specialFunctionsData();
   let msg = '';
 
   if (buildingType === 'ratusz') {
@@ -256,7 +258,7 @@ interface IterationData {
 export const simulate = (queue: QueueBuilding[]) => {
   resetAllData();
   const { getBuildingCosts, getWorkersNeeded } = buildingParams();
-  const { getBuildTime } = buildingsTimeData();
+  const { getBuildTime } = buildingTimeData();
   const simulationLogs: IterationData[] = [];
 
   for (const queueItem of queue) {

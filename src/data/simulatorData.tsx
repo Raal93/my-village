@@ -692,29 +692,6 @@ export const buildingParams = () => {
     },
   });
 
-  const ratuszTimeFactorByLvl = [
-    0.95, 0.91, 0.86, 0.82, 0.78, 0.75, 0.71, 0.68, 0.64, 0.61, 0.58, 0.56, 0.53, 0.51,
-    0.48, 0.46, 0.44, 0.42, 0.4, 0.38, 0.36, 0.34, 0.33, 0.31, 0.3, 0.28, 0.27, 0.26,
-    0.24, 0.23,
-  ];
-  const workersCapByLvl = [
-    240, 281, 329, 386, 452, 530, 622, 729, 854, 1002, 1174, 1376, 1613, 1891, 2216, 2598,
-    3045, 3569, 4183, 4904, 5748, 6737, 7896, 9255, 10848, 12715, 14904, 17469, 20476,
-    24000,
-  ];
-  const stockCapByLvl = [
-    1000, 1229, 1512, 1859, 2285, 2810, 3454, 4247, 5222, 6420, 7893, 9705, 11932, 14670,
-    18037, 22177, 27266, 33523, 41217, 50675, 62305, 76604, 94184, 115798, 142373, 175047,
-    215219, 264611, 325337, 400000,
-  ];
-
-  const getRatuszTimeFactorByLvl = (ratuszLvl: number): number => {
-    return ratuszTimeFactorByLvl[ratuszLvl - 1];
-  };
-
-  const getWorkersCapByLvl = (lvl: number): number => workersCapByLvl[lvl - 1];
-  const getStockCapByLvl = (lvl: number): number => stockCapByLvl[lvl - 1];
-
   const getBuildingCosts = (type: string, level: number): BuildingResources => {
     const buildings = allBuildingData();
 
@@ -764,57 +741,5 @@ export const buildingParams = () => {
     getBuildingCosts,
     getWorkersNeeded,
     getProduction,
-    getWorkersCapByLvl,
-    getStockCapByLvl,
-    getRatuszTimeFactorByLvl,
   };
-};
-
-export const buildingsTimeData = () => {
-  interface BuildingTimes {
-    [key: string]: number[];
-  }
-
-  const allBuildingsTimeData = (): BuildingTimes => ({
-    ratusz: [
-      6, 6, 90, 281, 534, 843, 1203, 1630, 2136, 2726, 3434, 4271, 5266, 6446, 7851, 9526,
-      11515, 13881, 16691, 20035, 24003, 28718, 34321, 40964, 48860, 58206, 69295, 82445,
-      98041, 116531,
-    ],
-    tartak: [
-      6, 6, 90, 281, 534, 843, 1203, 1630, 2136, 2726, 3434, 4271, 5266, 6446, 7851, 9526,
-      11515, 13881, 16691, 20035, 24003, 28718, 34321, 40964, 48860, 58206, 69295, 82445,
-      98041, 116531,
-    ],
-    cegielnia: [
-      6, 6, 90, 281, 534, 843, 1203, 1630, 2136, 2726, 3434, 4271, 5266, 6446, 7851, 9526,
-      11515, 13881, 16691, 20035, 24003, 28718, 34321, 40964, 48860, 58206, 69295, 82445,
-      98041, 116531,
-    ],
-    hutaZelaza: [
-      7, 7, 108, 338, 641, 1013, 1445, 1958, 2565, 3274, 4124, 5130, 6325, 7742, 9430,
-      11441, 13831, 16673, 20048, 24064, 28829, 34493, 41222, 49201, 58685, 69910, 83228,
-      99023, 117754, 139961,
-    ],
-    zagroda: [
-      8, 8, 120, 375, 713, 1125, 1605, 2175, 2850, 3638, 4583, 5700, 7028, 8603, 10478,
-      12713, 15368, 18525, 22275, 26738, 32033, 38325, 45803, 54668, 65205, 77678, 92475,
-      110025, 130838, 155513,
-    ],
-    spichlerz: [
-      6, 6, 102, 319, 605, 956, 1363, 1847, 2421, 3089, 3892, 4841, 5969, 7306, 8899,
-      10797, 13052, 15734, 18919, 22709, 27206, 32551, 38902, 46431, 55381, 65974, 78542,
-      93448, 111125, 132082,
-    ],
-  });
-
-  const getBuildTime = (buildingType: string, level: number): number => {
-    const buildingTimes = allBuildingsTimeData()[buildingType];
-    if (!buildingTimes || level <= 0 || level > buildingTimes.length) {
-      throw new Error('Invalid building type or level');
-    }
-    return buildingTimes[level - 1];
-  };
-
-  return { getBuildTime };
 };
