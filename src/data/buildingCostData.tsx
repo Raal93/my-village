@@ -1,6 +1,6 @@
 import { allBuldingData, BuildingResources } from '../models/models';
 
-export const buildingParams = () => {
+export const buildingCostData = () => {
   const allBuildingData = (): allBuldingData => ({
     ratusz: {
       1: { resources: { wood: 90, clay: 80, iron: 70 }, workers: 5 },

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { specialFunctionsData } from '../data/specialFunctionsData';
+import { buildingSpecialData } from '../data/buildingSpecialData';
 import { ResourceProduction, ResourceStock } from '../models/models';
 
 const HOUR_TO_SEC = 60 * 60;
@@ -41,7 +41,7 @@ export const manageResources = () => {
   });
 
   const upgradeBuilding = (resourceType: keyof ResourceProduction) => {
-    const { getProductionOnLvl } = specialFunctionsData();
+    const { getProductionOnLvl } = buildingSpecialData();
     setResourceBuilding((prevBuilding) => {
       if (prevBuilding[resourceType].level === 30) return prevBuilding;
       return {

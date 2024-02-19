@@ -1,4 +1,4 @@
-export const specialFunctionsData = () => {
+export const buildingSpecialData = () => {
   const productionBaseValues = [
     48, 56, 65, 76, 88, 102, 119, 138, 161, 187, 218, 253, 294, 342, 398, 463, 539, 626,
     729, 847, 986, 1146, 1333, 1551, 1804, 2098, 2440, 2838, 3301, 3840,
