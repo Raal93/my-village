@@ -44,8 +44,8 @@ const updateProductionStock = (
   buildingType: string,
   buildingLevel: number,
 ): BuildingResources => {
-  const { getProduction } = buildingParams(); // zainicjuj zewnętrzną funkcję
-  const newProductionByType = getProduction(buildingType, buildingLevel); // pobierz produkcję dla aktualnego budynku
+  const { getProductionOnLvl } = specialFunctionsData();
+  const newProductionByType = getProductionOnLvl(buildingLevel); // pobierz produkcję dla aktualnego budynku
   const resourceType = getResourceType(buildingType); // znajdź typ surowca po nazwie budynku
   const newProductionStock = { ...productionStock, [resourceType]: newProductionByType }; // wrzuć produkcję aktualnego do całej produkcji
   setProductionStock(newProductionStock); // ustaw nową produkcję

@@ -7,7 +7,6 @@ export interface BuildingResources {
 export interface BuildingLevelData {
   resources: BuildingResources;
   workers: number;
-  production: number;
 }
 
 export interface BuildingData {
