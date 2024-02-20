@@ -1,5 +1,5 @@
 export const buildingSpecialData = () => {
-  const productionBaseValues = [
+  const production = [
     48, 56, 65, 76, 88, 102, 119, 138, 161, 187, 218, 253, 294, 342, 398, 463, 539, 626,
     729, 847, 986, 1146, 1333, 1551, 1804, 2098, 2440, 2838, 3301, 3840,
   ];
@@ -28,10 +28,10 @@ export const buildingSpecialData = () => {
 
   const getStockCapByLvl = (lvl: number): number => stockCapByLvl[lvl - 1];
 
-  const getProductionOnLvl = (level: number) => productionBaseValues[level - 1];
+  const getProduction = (level: number) => production[level - 1];
 
   return {
-    getProductionOnLvl,
+    getProduction,
     getRatuszTimeFactorByLvl,
     getWorkersCapByLvl,
     getStockCapByLvl,

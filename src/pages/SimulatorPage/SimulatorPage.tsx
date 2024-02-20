@@ -172,7 +172,6 @@ const SimulatorPage = () => {
     timeWaited: 0,
     missingResources: { wood: 0, clay: 0, iron: 0 },
     generatedResources: { wood: 0, clay: 0, iron: 0 },
-    newProduction: { wood: 5, clay: 5, iron: 5 },
     newVillageState: {
       ratusz: 1,
       tartak: 0,
@@ -230,6 +229,7 @@ const SimulatorPage = () => {
 
   const doSimulation = (queue: QueueItem[]) => {
     const result = simulate(queue);
+    setSimulationResult(result);
     const time = getTime(result);
     setTotalTime(convertSecToTime(time.buildTime + time.waited));
     setBuildTime(convertSecToTime(time.buildTime));
