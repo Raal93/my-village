@@ -568,7 +568,7 @@ export const buildingCostData = () => {
     },
   });
 
-  const getBuildingCosts = (type: string, level: number): BuildingResources => {
+  const getBuildingCost = (type: string, level: number): BuildingResources => {
     const buildings = allBuildingData();
 
     if (!buildings[type]) {
@@ -599,7 +599,7 @@ export const buildingCostData = () => {
   };
 
   return {
-    getBuildingCosts,
+    getBuildingCost,
     getWorkersNeeded,
   };
 };

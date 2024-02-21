@@ -181,8 +181,8 @@ const SimulatorPage = () => {
       spichlerz: 1,
     },
     buildTime: 1,
-    stockAfterStartBuilding: { wood: 0, clay: 0, iron: 0 },
-    stockAfterFinishBuilding: { wood: 0, clay: 0, iron: 0 },
+    stockOnStartBuilding: { wood: 0, clay: 0, iron: 0 },
+    stockOnFinishBuilding: { wood: 0, clay: 0, iron: 0 },
     generatedDuringBuilding: { wood: 0, clay: 0, iron: 0 },
     specialAdded: '',
     currStockCap: 1000,
@@ -234,9 +234,9 @@ const SimulatorPage = () => {
     setTotalTime(convertSecToTime(time.buildTime + time.waited));
     setBuildTime(convertSecToTime(time.buildTime));
     setWaitedTime(convertSecToTime(time.waited));
-    setStockAfter(result[result.length - 1].stockAfterFinishBuilding);
+    setStockAfter(result[result.length - 1].stockOnFinishBuilding);
     setStockBefore(result[0].stock);
-    setStockOnStartBuilding(result[result.length - 1].stockAfterStartBuilding);
+    setStockOnStartBuilding(result[result.length - 1].stockOnStartBuilding);
     setWastedRess(result[result.length - 1].stockOver);
 
     console.log(result);

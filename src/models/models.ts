@@ -62,7 +62,7 @@ export interface ResourceProduction {
   iron: { level: number; production: number };
 }
 
-export interface IterationData {
+export interface SimulationItem {
   building: string;
   level: number;
   costs: BuildingResources;
@@ -73,8 +73,8 @@ export interface IterationData {
   generatedResourcesWhileWaiting: BuildingResources;
   newVillageState: VillageState;
   buildTime: number;
-  stockAfterStartBuilding: BuildingResources;
-  stockAfterFinishBuilding: BuildingResources;
+  stockOnStartBuilding: BuildingResources;
+  stockOnFinishBuilding: BuildingResources;
   generatedDuringBuilding: BuildingResources;
   specialAdded: string;
   currStockCap: number;

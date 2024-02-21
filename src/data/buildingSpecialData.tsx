@@ -9,7 +9,7 @@ export const buildingSpecialData = () => {
     0.48, 0.46, 0.44, 0.42, 0.4, 0.38, 0.36, 0.34, 0.33, 0.31, 0.3, 0.28, 0.27, 0.26,
     0.24, 0.23,
   ];
-  const workersCapByLvl = [
+  const workersCapacity = [
     240, 281, 329, 386, 452, 530, 622, 729, 854, 1002, 1174, 1376, 1613, 1891, 2216, 2598,
     3045, 3569, 4183, 4904, 5748, 6737, 7896, 9255, 10848, 12715, 14904, 17469, 20476,
     24000,
@@ -24,7 +24,7 @@ export const buildingSpecialData = () => {
     return ratuszTimeFactorByLvl[ratuszLvl - 1];
   };
 
-  const getWorkersCapByLvl = (lvl: number): number => workersCapByLvl[lvl - 1];
+  const getWorkersCapacity = (lvl: number): number => workersCapacity[lvl - 1];
 
   const getStockCapByLvl = (lvl: number): number => stockCapByLvl[lvl - 1];
 
@@ -33,7 +33,7 @@ export const buildingSpecialData = () => {
   return {
     getProduction,
     getRatuszTimeFactorByLvl,
-    getWorkersCapByLvl,
+    getWorkersCapacity,
     getStockCapByLvl,
   };
 };
