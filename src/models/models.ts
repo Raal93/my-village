@@ -61,3 +61,25 @@ export interface ResourceProduction {
   clay: { level: number; production: number };
   iron: { level: number; production: number };
 }
+
+export interface IterationData {
+  building: string;
+  level: number;
+  costs: BuildingResources;
+  stock: BuildingResources;
+  production: BuildingResources;
+  timeWaited: number;
+  missingResources: BuildingResources;
+  generatedResourcesWhileWaiting: BuildingResources;
+  newVillageState: VillageState;
+  buildTime: number;
+  stockAfterStartBuilding: BuildingResources;
+  stockAfterFinishBuilding: BuildingResources;
+  generatedDuringBuilding: BuildingResources;
+  specialAdded: string;
+  currStockCap: number;
+  currWorkersCap: number;
+  workersNeeded: number;
+  employedWorkers: number;
+  stockOver: BuildingResources;
+}

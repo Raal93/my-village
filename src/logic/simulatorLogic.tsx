@@ -1,12 +1,18 @@
 import { buildingCostData } from '../data/buildingCostData';
 import { buildingSpecialData } from '../data/buildingSpecialData';
 import { buildingTimeData } from '../data/buildingTimeData';
-import { BuildingResources, QueueBuilding, Time, VillageState } from '../models/models';
+import {
+  BuildingResources,
+  IterationData,
+  QueueBuilding,
+  Time,
+  VillageState,
+} from '../models/models';
 
 const HOUR_TO_SECOND = 1 * 60 * 60;
 const SECOND_TO_HOUR = 1 / (60 * 60);
 let resourcesStock = { wood: 200, clay: 200, iron: 200 };
-let productionStock = { wood: 5, clay: 5, iron: 5 };
+let production = { wood: 5, clay: 5, iron: 5 };
 let villageState = {
   ratusz: 1,
   tartak: 0,
@@ -132,34 +138,33 @@ const setSpecialFunctions = (buildingType: string, buildingLevel: number): strin
     getRatuszTimeFactorByLvl,
     getProduction,
   } = buildingSpecialData();
-  let msg = '';
 
   if (buildingType === 'ratusz') {
     ratuszTimeFactor = getRatuszTimeFactorByLvl(buildingLevel);
-    msg = `Ustwiono nowy współczynnik czasowy na ${ratuszTimeFactor}%.`;
+    return `Ustwiono nowy współczynnik czasowy na ${ratuszTimeFactor}%.`;
   }
   if (buildingType === 'zagroda') {
     workersCap = getWorkersCapByLvl(buildingLevel);
-    msg = `Ustawiono nową pojemność zagrody na ${workersCap} miejsc.`;
+    return `Ustawiono nową pojemność zagrody na ${workersCap} miejsc.`;
   }
   if (buildingType === 'spichlerz') {
     stockCap = getStockCapByLvl(buildingLevel);
-    msg = `Ustawiono nową pojemność spichlerza na ${stockCap} miejsc`;
+    return `Ustawiono nową pojemność spichlerza na ${stockCap} miejsc`;
   }
   if (buildingType === 'tartak') {
-    productionStock.wood = getProduction(buildingLevel);
-    msg = `Ustawiono nową produkcję w tartaku: ${productionStock.wood} na godzinę.`;
+    production.wood = getProduction(buildingLevel);
+    return `Ustawiono nową produkcję w tartaku: ${production.wood} na godzinę.`;
   }
   if (buildingType === 'cegielnia') {
-    productionStock.clay = getProduction(buildingLevel);
-    msg = `Ustawiono nową produkcję w cegielni: ${productionStock.clay} na godzinę.`;
+    production.clay = getProduction(buildingLevel);
+    return `Ustawiono nową produkcję w cegielni: ${production.clay} na godzinę.`;
   }
   if (buildingType === 'hutaZelaza') {
-    productionStock.iron = getProduction(buildingLevel);
-    msg = `Ustawiono nową produkcję w hucie żelaza: ${productionStock.iron} na godzinę.`;
+    production.iron = getProduction(buildingLevel);
+    return `Ustawiono nową produkcję w hucie żelaza: ${production.iron} na godzinę.`;
   }
 
-  return msg;
+  return `Nie znaleziono budynku ${buildingType} level ${buildingLevel}`;
 };
 
 const hasEnoughStockCap = (buildingCost: BuildingResources): boolean => {
@@ -183,7 +188,7 @@ const addBuildingResources = (
 
 const resetAllData = () => {
   resourcesStock = { wood: 200, clay: 200, iron: 200 };
-  productionStock = { wood: 5, clay: 5, iron: 5 };
+  production = { wood: 5, clay: 5, iron: 5 };
   villageState = {
     ratusz: 1,
     tartak: 0,
@@ -197,28 +202,6 @@ const resetAllData = () => {
   stockCap = 1000;
   ratuszTimeFactor = 0.95;
 };
-
-interface IterationData {
-  building: string;
-  level: number;
-  costs: BuildingResources;
-  stock: BuildingResources;
-  production: BuildingResources;
-  timeWaited: number;
-  missingResources: BuildingResources;
-  generatedResources: BuildingResources;
-  newVillageState: VillageState;
-  buildTime: number;
-  stockAfterStartBuilding: BuildingResources;
-  stockAfterFinishBuilding: BuildingResources;
-  generatedDuringBuilding: BuildingResources;
-  specialAdded: string;
-  currStockCap: number;
-  currWorkersCap: number;
-  workersNeeded: number;
-  employedWorkers: number;
-  stockOver: BuildingResources;
-}
 
 export const simulate = (queue: QueueBuilding[]) => {
   resetAllData();
@@ -235,7 +218,7 @@ export const simulate = (queue: QueueBuilding[]) => {
       production: { wood: 5, clay: 5, iron: 5 },
       timeWaited: 0,
       missingResources: { wood: 0, clay: 0, iron: 0 },
-      generatedResources: { wood: 0, clay: 0, iron: 0 },
+      generatedResourcesWhileWaiting: { wood: 0, clay: 0, iron: 0 },
       newVillageState: {
         ratusz: 1,
         tartak: 0,
@@ -259,7 +242,7 @@ export const simulate = (queue: QueueBuilding[]) => {
     const buildingType = queueItem.building; // ustal typ budynku
     const buildingCost = getBuildingCosts(buildingType, buildingLevel); // ustal koszty bieżącego budynku
     stockUpgradeSuggestion(buildingCost, buildingType, buildingLevel);
-    const production = { ...productionStock }; // ustal aktualną produkcję wioski
+    // const production = { ...production }; // ustal aktualną produkcję wioski
     const currentStock = resourcesStock; // ustal aktualny stan spichlerza
     iterationData.currStockCap = stockCap; // ustal max pojemnosc spichlerza
     // const employedWorkers = employedWorkers;
@@ -297,7 +280,7 @@ export const simulate = (queue: QueueBuilding[]) => {
 
       iterationData.missingResources = missingResources;
       iterationData.timeWaited = timeWaited;
-      iterationData.generatedResources = generatedResources;
+      iterationData.generatedResourcesWhileWaiting = generatedResources;
     } else {
       iterationData.timeWaited = 0;
     }
