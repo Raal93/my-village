@@ -2,8 +2,8 @@ import { useState } from 'react';
 import React, { useEffect } from 'react';
 
 import QueueComponent from '../../components/molecules/QueueComponent/QueueComponent';
-import { simulate } from '../../logic/simulatorLogic';
-import { getTime } from '../../logic/simulatorLogic';
+import { simulationLoop } from '../../logic/simulationLoop';
+import { getTime } from '../../logic/simulationLoop';
 import { BuildingResources, QueueItem } from '../../models/models';
 import { BelowFixed, FixedTop, SimulatorWrapper } from './SimulatorPage.styles';
 
@@ -171,7 +171,7 @@ const SimulatorPage = () => {
     production: { wood: 5, clay: 5, iron: 5 },
     timeWaited: 0,
     missingResources: { wood: 0, clay: 0, iron: 0 },
-    generatedResources: { wood: 0, clay: 0, iron: 0 },
+    generatedResourcesWhileWaiting: { wood: 0, clay: 0, iron: 0 },
     newVillageState: {
       ratusz: 1,
       tartak: 0,
@@ -205,7 +205,7 @@ const SimulatorPage = () => {
   const [simulationResult, setSimulationResult] = useState([initialResult]);
 
   useEffect(() => {
-    const result = simulate(initialQueue);
+    const result = simulationLoop(initialQueue);
     setSimulationResult(result);
     const time = getTime(result);
     setTotalTime(convertSecToTime(time.buildTime + time.waited));
@@ -228,7 +228,7 @@ const SimulatorPage = () => {
   };
 
   const doSimulation = (queue: QueueItem[]) => {
-    const result = simulate(queue);
+    const result = simulationLoop(queue);
     setSimulationResult(result);
     const time = getTime(result);
     setTotalTime(convertSecToTime(time.buildTime + time.waited));

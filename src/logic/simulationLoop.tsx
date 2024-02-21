@@ -203,7 +203,7 @@ const resetAllData = () => {
   ratuszTimeFactor = 0.95;
 };
 
-export const simulate = (queue: QueueBuilding[]) => {
+export const simulationLoop = (queue: QueueBuilding[]) => {
   resetAllData();
   const { getBuildingCosts, getWorkersNeeded } = buildingCostData();
   const { getBuildTime } = buildingTimeData();
@@ -254,7 +254,7 @@ export const simulate = (queue: QueueBuilding[]) => {
     iterationData.level = buildingLevel;
     iterationData.costs = buildingCost;
     iterationData.stock = currentStock;
-    iterationData.production = production;
+    iterationData.production = { ...production };
 
     if (!(freeWorkers >= workersNeeded)) {
       throw console.error(
