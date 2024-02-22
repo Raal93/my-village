@@ -9,6 +9,35 @@ import {
   VillageState,
 } from '../models/models';
 
+const InitialItem = {
+  building: '',
+  level: 0,
+  costs: { wood: 0, clay: 0, iron: 0 },
+  stock: { wood: 200, clay: 200, iron: 200 },
+  production: { wood: 5, clay: 5, iron: 5 },
+  timeWaited: 0,
+  missingResources: { wood: 0, clay: 0, iron: 0 },
+  generatedResourcesWhileWaiting: { wood: 0, clay: 0, iron: 0 },
+  newVillageState: {
+    ratusz: 1,
+    tartak: 0,
+    cegielnia: 0,
+    hutaZelaza: 0,
+    zagroda: 1,
+    spichlerz: 1,
+  },
+  buildTime: 1,
+  stockOnStartBuilding: { wood: 0, clay: 0, iron: 0 },
+  stockOnFinishBuilding: { wood: 0, clay: 0, iron: 0 },
+  generatedDuringBuilding: { wood: 0, clay: 0, iron: 0 },
+  specialAdded: '',
+  currStockCap: 1000,
+  currWorkersCap: 240,
+  workersNeeded: 1,
+  employedWorkers: 5,
+  stockOver: { wood: 0, clay: 0, iron: 0 },
+};
+
 const HOUR_TO_SECOND = 1 * 60 * 60;
 const SECOND_TO_HOUR = 1 / (60 * 60);
 let stock = { wood: 200, clay: 200, iron: 200 };
@@ -25,6 +54,7 @@ let workersCap = 240;
 let employedWorkers = 5;
 let stockCap = 1000;
 let ratuszTimeFactor = 0.95;
+const simulationItem = { ...InitialItem };
 
 const stockUpgradeSuggestion = (building: string, lvl: number) => {
   const { getBuildingCost } = buildingCostData();
@@ -96,11 +126,12 @@ const calcMissingResources = (
   currentStock: BuildingResources,
   costs: BuildingResources,
 ): BuildingResources => {
-  return {
+  simulationItem.missingResources = {
     wood: Math.max(costs.wood - currentStock.wood, 0),
     clay: Math.max(costs.clay - currentStock.clay, 0),
     iron: Math.max(costs.iron - currentStock.iron, 0),
   };
+  return { ...simulationItem.missingResources };
 };
 
 const calcWaitingTime = (
@@ -175,18 +206,7 @@ const hasEnoughStockCap = (buildingCost: BuildingResources): boolean => {
   );
 };
 
-// const addBuildingResources = (
-//   ressA: BuildingResources,
-//   ressB: BuildingResources,
-// ): BuildingResources => {
-//   return {
-//     wood: ressA.wood + ressB.wood,
-//     clay: ressA.clay + ressB.clay,
-//     iron: ressA.iron + ressB.iron,
-//   };
-// };
-
-const resetAllData = () => {
+const resetSimulationLoopDetails = () => {
   stock = { wood: 200, clay: 200, iron: 200 };
   production = { wood: 5, clay: 5, iron: 5 };
   villageState = {
@@ -204,40 +224,12 @@ const resetAllData = () => {
 };
 
 export const simulationLoop = (queue: QueueBuilding[]) => {
-  resetAllData();
+  resetSimulationLoopDetails();
   const { getBuildingCost, getWorkersNeeded } = buildingCostData();
   const { getBuildTime } = buildingTimeData();
   const simulationLoopDetails: SimulationItem[] = [];
 
   for (const queueItem of queue) {
-    const SimulationItem = {
-      building: '',
-      level: 0,
-      costs: { wood: 0, clay: 0, iron: 0 },
-      stock: { wood: 200, clay: 200, iron: 200 },
-      production: { wood: 5, clay: 5, iron: 5 },
-      timeWaited: 0,
-      missingResources: { wood: 0, clay: 0, iron: 0 },
-      generatedResourcesWhileWaiting: { wood: 0, clay: 0, iron: 0 },
-      newVillageState: {
-        ratusz: 1,
-        tartak: 0,
-        cegielnia: 0,
-        hutaZelaza: 0,
-        zagroda: 1,
-        spichlerz: 1,
-      },
-      buildTime: 1,
-      stockOnStartBuilding: { wood: 0, clay: 0, iron: 0 },
-      stockOnFinishBuilding: { wood: 0, clay: 0, iron: 0 },
-      generatedDuringBuilding: { wood: 0, clay: 0, iron: 0 },
-      specialAdded: '',
-      currStockCap: 1000,
-      currWorkersCap: 240,
-      workersNeeded: 1,
-      employedWorkers: 5,
-      stockOver: { wood: 0, clay: 0, iron: 0 },
-    };
     const level = queueItem.level;
     const building = queueItem.building;
 
@@ -269,38 +261,37 @@ export const simulationLoop = (queue: QueueBuilding[]) => {
       const generatedResources = calcGeneratedResources(timeWaited, production);
       updateStock(generatedResources, 'plus');
 
-      SimulationItem.missingResources = missingResources;
-      SimulationItem.timeWaited = timeWaited;
-      SimulationItem.generatedResourcesWhileWaiting = generatedResources;
+      simulationItem.timeWaited = timeWaited;
+      simulationItem.generatedResourcesWhileWaiting = generatedResources;
     } else {
-      SimulationItem.timeWaited = 0;
+      simulationItem.timeWaited = 0;
     }
 
-    SimulationItem.stock = { ...stock };
+    simulationItem.stock = { ...stock };
     updateStock(cost, 'minus');
-    SimulationItem.stockOnStartBuilding = stock;
+    simulationItem.stockOnStartBuilding = stock;
     const generatedDuringBuilding = calcGeneratedResources(buildTime, production); //ile surki wygenerowało podczas budowy
     const overproduction = updateStock(generatedDuringBuilding, 'plus'); // dodaj i zapisz nadmiar jeśli wystąpił
-    SimulationItem.stockOnFinishBuilding = stock;
+    simulationItem.stockOnFinishBuilding = stock;
     updateVillageState(building, level);
     const specialFn = setSpecialFunctions(building, level);
 
     // OPISYWANIE
-    SimulationItem.currStockCap = stockCap;
-    SimulationItem.building = building;
-    SimulationItem.level = level;
-    SimulationItem.costs = { ...cost };
-    SimulationItem.production = { ...production };
-    SimulationItem.currWorkersCap = workersCap;
-    SimulationItem.workersNeeded = workersNeeded;
-    SimulationItem.employedWorkers = employedWorkers;
-    SimulationItem.buildTime = buildTime;
-    SimulationItem.stockOver = { ...overproduction };
-    SimulationItem.generatedDuringBuilding = { ...generatedDuringBuilding };
-    SimulationItem.newVillageState = { ...villageState };
-    SimulationItem.specialAdded = specialFn;
+    simulationItem.currStockCap = stockCap;
+    simulationItem.building = building;
+    simulationItem.level = level;
+    simulationItem.costs = { ...cost };
+    simulationItem.production = { ...production };
+    simulationItem.currWorkersCap = workersCap;
+    simulationItem.workersNeeded = workersNeeded;
+    simulationItem.employedWorkers = employedWorkers;
+    simulationItem.buildTime = buildTime;
+    simulationItem.stockOver = { ...overproduction };
+    simulationItem.generatedDuringBuilding = { ...generatedDuringBuilding };
+    simulationItem.newVillageState = { ...villageState };
+    simulationItem.specialAdded = specialFn;
 
-    simulationLoopDetails.push(SimulationItem);
+    simulationLoopDetails.push(simulationItem);
   }
   return simulationLoopDetails;
 };
